@@ -1,0 +1,23 @@
+[project]
+name = "calvin-env-10"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "gym>=0.26.2",
+    "networkx>=2.8",
+    "numpy-quaternion>=2024.0.9",
+    "opencv-python>=4.11.0.86",
+    "pybullet>=3.2.7",
+    "pyyaml>=6.0.2",
+    "pyrender>=0.1.45",
+    "tacto",
+]
+
+[tool.uv.sources]
+tacto = { git = "https://github.com/facebookresearch/tacto.git" }
+
+[tool.uv.override-dependencies]
+networkx = ">=2.8"
+urdfpy = ">=0.0.23"
