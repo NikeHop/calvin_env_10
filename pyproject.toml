@@ -44,5 +44,6 @@ dependencies = [
 ]
 
 
-
+[tool.setuptools.package-data]
+calvin_env_10 = ["task_configs/*.yaml", "data/*", "conf/*"]
 
