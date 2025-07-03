@@ -5,7 +5,7 @@ import numpy as np
 from calvin_env_10.camera.camera import Camera
 import tacto
 
-REPO_BASE = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+REPO_BASE = os.path.dirname(os.path.dirname(__file__))
 
 
 class TactileSensor(Camera):

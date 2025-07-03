@@ -16,7 +16,8 @@ from calvin_env_10.scene.objects.switch import Switch
 log = logging.getLogger(__name__)
 
 
-REPO_BASE = Path(__file__).parents[2]
+REPO_BASE = Path(__file__).parents[1]
+print(REPO_BASE)
 
 
 class PlayTableScene:
@@ -27,6 +28,7 @@ class PlayTableScene:
         self.euler_obs = euler_obs
         self.surfaces = surfaces
         self.np_random = np_random
+
         if os.path.isabs(data_path):
             self.data_path = Path(data_path)
         else:

@@ -19,17 +19,14 @@ import numpy as np
 import pybullet as p
 import pybullet_utils.bullet_client as bc
 
+from hydra.core.hydra_config import HydraConfig
 from omegaconf import OmegaConf
 
 from calvin_env_10.utils.utils import FpsController
-from calvin_env_10.robot.robot import Robot
-from calvin_env_10.scene.play_table_scene import PlayTableScene
-from calvin_env_10.camera.static_camera import StaticCamera
-from calvin_env_10.camera.gripper_camera import GripperCamera
-from calvin_env_10.camera.tactile_sensor import TactileSensor
 
 
-BASE_DIR = Path(__file__).parent.parent.parent
+
+BASE_DIR = Path(__file__).parent.parent
 TASK2CONFIG = {
     "task_D_D": os.path.join(BASE_DIR, "task_configs/task_D_D.yaml"),
 }
@@ -41,36 +38,6 @@ from rich.traceback import install
 install(show_locals=True)
 
 
-def instantiate_from_config(config, **kwargs):
-    """
-    Factory function to instantiate objects from config without using hydra.utils.instantiate
-    """
-    
-    if "_target_" in config:
-        print("inside")
-        target_class = config["_target_"]
-        # Remove hydra-specific keys
-        config_copy = {k: v for k, v in config.items() if not k.startswith("_")}
-        # Add any additional kwargs
-        config_copy.update(kwargs)
-
-        # Map target classes to actual classes
-        class_mapping = {
-            "calvin_env.robot.robot.Robot": Robot,
-            "calvin_env.scene.play_table_scene.PlayTableScene": PlayTableScene,
-            "calvin_env.camera.static_camera.StaticCamera": StaticCamera,
-            "calvin_env.camera.gripper_camera.GripperCamera": GripperCamera,
-            "calvin_env.camera.tactile_sensor.TactileSensor": TactileSensor,
-            "calvin_env.envs.play_table_env.PlayTableSimEnv": PlayTableSimEnv,
-        }
-
-        if target_class in class_mapping:
-            return class_mapping[target_class](**config_copy)
-        else:
-            raise ValueError(f"Unknown target class: {target_class}")
-    else:
-        # If no _target_ specified, assume it's a direct config dict
-        return config
 
 
 class PlayTableSimEnv(gym.Env):
@@ -318,8 +285,11 @@ class PlayTableSimEnv(gym.Env):
         return data
 
 
+
 def get_env(task_name, obs_space=None, show_gui=True):
+    
     config_path = TASK2CONFIG[task_name]
+
     # Load config with standard yaml instead of OmegaConf
     render_conf = OmegaConf.load(config_path)
     #render_conf = OmegaConf.to_container(render_conf, resolve=True)
@@ -331,22 +301,17 @@ def get_env(task_name, obs_space=None, show_gui=True):
         for k in exclude_keys:
             del render_conf["cameras"][k]
 
-  
+
     env = hydra.utils.instantiate(render_conf["env"], show_gui=show_gui, use_vr=False, use_scene_info=True)
     return env
 
 
-def run_env(dataset_path, show_gui=True):
+def run_env(show_gui=True):
     """Run the environment with the specified dataset path"""
     # Replace hydra.utils.instantiate with direct instantiation
-    env = get_env(dataset_path, show_gui=show_gui)
-
-
+    env = get_env("task_D_D", show_gui=show_gui)
     
     result = env.reset()
-
-    print(result)
-    exit(0)
 
     while True:
         env.step(np.array((0.0, 0, 0, 0, 0, 1)))
@@ -363,5 +328,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    run_env(show_gui=False)
 
-    get_env("task_D_D", show_gui=False)
