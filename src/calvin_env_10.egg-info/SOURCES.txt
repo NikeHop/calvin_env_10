@@ -10,6 +10,8 @@ src/calvin_env_10/camera/camera.py
 src/calvin_env_10/camera/gripper_camera.py
 src/calvin_env_10/camera/static_camera.py
 src/calvin_env_10/camera/tactile_sensor.py
+src/calvin_env_10/conf/config_data_collection.yaml
+src/calvin_env_10/conf/config_rendering.yaml
 src/calvin_env_10/envs/play_table_env.py
 src/calvin_env_10/robot/mixed_ik.py
 src/calvin_env_10/robot/robot.py
@@ -21,5 +23,6 @@ src/calvin_env_10/scene/objects/fixed_object.py
 src/calvin_env_10/scene/objects/light.py
 src/calvin_env_10/scene/objects/movable_object.py
 src/calvin_env_10/scene/objects/switch.py
+src/calvin_env_10/task_configs/task_D_D.yaml
 src/calvin_env_10/utils/utils.py
 tests/test_environment.py
