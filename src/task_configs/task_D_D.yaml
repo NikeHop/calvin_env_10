@@ -1,6 +1,6 @@
 cameras:
   static:
-    _target_: calvin_env.camera.static_camera.StaticCamera
+    _target_: calvin_env_10.camera.static_camera.StaticCamera
     name: static
     fov: 10
     aspect: 1
@@ -21,7 +21,7 @@ cameras:
     - 0.22629790978217404
     - 0.8862616969685161
   gripper:
-    _target_: calvin_env.camera.gripper_camera.GripperCamera
+    _target_: calvin_env_10.camera.gripper_camera.GripperCamera
     name: gripper
     fov: 75
     aspect: 1
@@ -30,7 +30,7 @@ cameras:
     width: 84
     height: 84
   tactile:
-    _target_: calvin_env.camera.tactile_sensor.TactileSensor
+    _target_: calvin_env_10.camera.tactile_sensor.TactileSensor
     name: tactile
     width: 120
     height: 160
@@ -65,7 +65,7 @@ vr_input:
   visualize_vr_pos: true
   reset_button_queue_len: 60
 env:
-  _target_: calvin_env.envs.play_table_env.PlayTableSimEnv
+  _target_: calvin_env_10.envs.play_table_env.PlayTableSimEnv
   _recursive_: false
   cameras: ${cameras}
   seed: 0
@@ -78,7 +78,7 @@ env:
   use_egl: true
   control_freq: 30
 scene:
-  _target_: calvin_env.scene.play_table_scene.PlayTableScene
+  _target_: calvin_env_10.scene.play_table_scene.PlayTableScene
   _recursive_: false
   data_path: ${data_path}
   global_scaling: 0.8
@@ -176,7 +176,7 @@ scene:
         initial_orn: any
   name: calvin_scene_D
 robot:
-  _target_: calvin_env.robot.robot.Robot
+  _target_: calvin_env_10.robot.robot.Robot
   filename: franka_panda/panda_longer_finger.urdf
   base_position: ${scene.robot_base_position}
   base_orientation: ${scene.robot_base_orientation}
@@ -208,7 +208,7 @@ robot:
   use_target_pose: true
   euler_obs: true
 tasks:
-  _target_: calvin_env.envs.tasks.Tasks
+  _target_: calvin_env_10.envs.tasks.Tasks
   tasks:
     rotate_red_block_right:
     - rotate_object

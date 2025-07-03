@@ -10,7 +10,16 @@ REPO_BASE = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 class TactileSensor(Camera):
     def __init__(
-        self, width, height, digit_link_ids, visualize_gui, cid, name, config_path, robot_id=None, objects=None
+        self,
+        width,
+        height,
+        digit_link_ids,
+        visualize_gui,
+        cid,
+        name,
+        config_path,
+        robot_id=None,
+        objects=None,
     ):
         """
         Initialize the camera
@@ -20,11 +29,17 @@ class TactileSensor(Camera):
         Returns:
             None
         """
+        print("TactileSensor init")
+
         self.cid = cid
         self.name = name
         self.robot_uid = robot_id
+
         self.digits = tacto.Sensor(
-            width=width, height=height, visualize_gui=visualize_gui, config_path=os.path.join(REPO_BASE, config_path)
+            width=width,
+            height=height,
+            visualize_gui=visualize_gui,
+            config_path=os.path.join(REPO_BASE, config_path),
         )
         self.digits.add_camera(robot_id, digit_link_ids)  # env.robot.digit_links()
         for obj in objects:

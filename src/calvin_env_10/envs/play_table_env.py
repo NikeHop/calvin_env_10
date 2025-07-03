@@ -14,6 +14,7 @@ import gym
 import gym.utils
 import gym.utils.seeding
 
+import hydra 
 import numpy as np
 import pybullet as p
 import pybullet_utils.bullet_client as bc
@@ -26,6 +27,12 @@ from calvin_env_10.scene.play_table_scene import PlayTableScene
 from calvin_env_10.camera.static_camera import StaticCamera
 from calvin_env_10.camera.gripper_camera import GripperCamera
 from calvin_env_10.camera.tactile_sensor import TactileSensor
+
+
+BASE_DIR = Path(__file__).parent.parent.parent
+TASK2CONFIG = {
+    "task_D_D": os.path.join(BASE_DIR, "task_configs/task_D_D.yaml"),
+}
 
 # A logger for this file
 log = logging.getLogger(__name__)
@@ -101,15 +108,17 @@ class PlayTableSimEnv(gym.Env):
         self.seed(seed)
 
         # Replace hydra.utils.instantiate with direct instantiation
-        self.robot = instantiate_from_config(robot_cfg, cid=self.cid)
-        self.scene = instantiate_from_config(scene_cfg, p=self.p, cid=self.cid, np_random=self.np_random)
+        self.robot = hydra.utils.instantiate(robot_cfg, cid=self.cid)
+        self.scene = hydra.utils.instantiate(scene_cfg, p=self.p, cid=self.cid, np_random=self.np_random)
 
         # Load Env
         self.load()
 
         # init cameras after scene is loaded to have robot id available
+        print(cameras)
+        
         self.cameras = [
-            instantiate_from_config(
+            hydra.utils.instantiate(
                 cameras[name], cid=self.cid, robot_id=self.robot.robot_uid, objects=self.scene.get_objects()
             )
             for name in cameras
@@ -309,7 +318,8 @@ class PlayTableSimEnv(gym.Env):
         return data
 
 
-def get_env(config_path, obs_space=None, show_gui=True):
+def get_env(task_name, obs_space=None, show_gui=True):
+    config_path = TASK2CONFIG[task_name]
     # Load config with standard yaml instead of OmegaConf
     render_conf = OmegaConf.load(config_path)
     #render_conf = OmegaConf.to_container(render_conf, resolve=True)
@@ -322,7 +332,7 @@ def get_env(config_path, obs_space=None, show_gui=True):
             del render_conf["cameras"][k]
 
   
-    env = instantiate_from_config(render_conf["env"], show_gui=show_gui, use_vr=False, use_scene_info=True)
+    env = hydra.utils.instantiate(render_conf["env"], show_gui=show_gui, use_vr=False, use_scene_info=True)
     return env
 
 
@@ -331,9 +341,13 @@ def run_env(dataset_path, show_gui=True):
     # Replace hydra.utils.instantiate with direct instantiation
     env = get_env(dataset_path, show_gui=show_gui)
 
+
     
+    result = env.reset()
+
+    print(result)
     exit(0)
-    env.reset()
+
     while True:
         env.step(np.array((0.0, 0, 0, 0, 0, 1)))
         # env.render()
@@ -350,4 +364,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    run_env(args.config, show_gui=args.show_gui)
+    get_env("task_D_D", show_gui=False)
