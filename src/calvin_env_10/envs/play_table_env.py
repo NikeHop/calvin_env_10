@@ -37,9 +37,6 @@ from rich.traceback import install
 
 install(show_locals=True)
 
-
-
-
 class PlayTableSimEnv(gym.Env):
     def __init__(
         self,
@@ -314,8 +311,8 @@ def run_env(show_gui=True):
     result = env.reset()
 
     while True:
-        env.step(np.array((0.0, 0, 0, 0, 0, 1)))
-        # env.render()
+        env.step(np.array((0.0, 0, 0, 0, 0, 0, 1)))
+        env.render()
         time.sleep(0.01)
 
 

@@ -75,7 +75,7 @@ env:
   robot_cfg: ${robot}
   scene_cfg: ${scene}
   use_scene_info: false
-  use_egl: true
+  use_egl: false
   control_freq: 30
 scene:
   _target_: calvin_env_10.scene.play_table_scene.PlayTableScene
