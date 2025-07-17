@@ -7,6 +7,7 @@ import tacto
 
 REPO_BASE = os.path.dirname(os.path.dirname(__file__))
 
+print(REPO_BASE)
 
 class TactileSensor(Camera):
     def __init__(

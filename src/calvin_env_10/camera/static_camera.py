@@ -61,6 +61,8 @@ class StaticCamera(Camera):
         return look_from, look_at
 
     def render(self):
+        print(f"Static Camera: {self.viewMatrix}")
+        print(f"Static Camera: {self.projectionMatrix}")
         image = p.getCameraImage(
             width=self.width,
             height=self.height,
@@ -68,5 +70,6 @@ class StaticCamera(Camera):
             projectionMatrix=self.projectionMatrix,
             physicsClientId=self.cid,
         )
+
         rgb_img, depth_img = self.process_rgbd(image, self.nearval, self.farval)
         return rgb_img, depth_img

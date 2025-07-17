@@ -18,9 +18,10 @@ import hydra
 import numpy as np
 import pybullet as p
 import pybullet_utils.bullet_client as bc
-
+import pybullet_data
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import OmegaConf
+from PIL import Image
 
 from calvin_env_10.utils.utils import FpsController
 
@@ -72,21 +73,48 @@ class PlayTableSimEnv(gym.Env):
         self.seed(seed)
 
         # Replace hydra.utils.instantiate with direct instantiation
+        
+        
         self.robot = hydra.utils.instantiate(robot_cfg, cid=self.cid)
         self.scene = hydra.utils.instantiate(scene_cfg, p=self.p, cid=self.cid, np_random=self.np_random)
-
+        
         # Load Env
         self.load()
 
+        """
+        for _ in range(100):
+            self.p.stepSimulation()
+
+        view = self.p.computeViewMatrixFromYawPitchRoll([0, 0, 0], 1.5, 30, -30, 0, 2)
+        proj = self.p.computeProjectionMatrixFOV(60, 1.0, 0.1, 100.0)
+
+        print(view)
+        print(proj)
+        w, h, rgba, _, _ = p.getCameraImage(640, 480, view, proj,physicsClientId=self.cid, renderer=p.ER_BULLET_HARDWARE_OPENGL)
+        img = np.reshape(rgba, (h, w, 4))
+        Image.fromarray(img[:, :, :3].astype(np.uint8)).save("render.png")
+        """
         # init cameras after scene is loaded to have robot id available
         print(cameras)
-        
+        print(self.robot)
+        print(self.scene)
+
         self.cameras = [
             hydra.utils.instantiate(
                 cameras[name], cid=self.cid, robot_id=self.robot.robot_uid, objects=self.scene.get_objects()
             )
-            for name in cameras
+            for name in cameras 
         ]
+        self.debug_scene(self.p, self.cid)
+        
+    def debug_scene(self, p, cid):
+        num = p.getNumBodies(physicsClientId=cid)
+        print(f"=== Scene has {num} bodies ===")
+        for i in range(num):
+            bid = p.getBodyUniqueId(i, physicsClientId=cid)
+            name = p.getBodyInfo(bid, physicsClientId=cid)[1].decode()
+            visuals = p.getVisualShapeData(bid, physicsClientId=cid)
+            print(f"- {name} (id={bid}): {len(visuals)} visual shapes")
 
 
     def __del__(self):
@@ -111,12 +139,15 @@ class PlayTableSimEnv(gym.Env):
                     log.error("Failed to connect to GUI.")
             elif self.use_egl:
                 options = f"--width={render_width} --height={render_height}"
-                self.p = p
-                cid = self.p.connect(p.DIRECT, options=options)
-                p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0, physicsClientId=cid)
-                p.configureDebugVisualizer(p.COV_ENABLE_SEGMENTATION_MARK_PREVIEW, 0, physicsClientId=cid)
-                p.configureDebugVisualizer(p.COV_ENABLE_DEPTH_BUFFER_PREVIEW, 0, physicsClientId=cid)
-                p.configureDebugVisualizer(p.COV_ENABLE_RGB_BUFFER_PREVIEW, 0, physicsClientId=cid)
+                os.environ["PYOPENGL_PLATFORM"] = "egl"
+                self.p = bc.BulletClient(connection_mode=p.DIRECT)
+                cid = self.p._client
+               
+                #p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0, physicsClientId=cid)
+                #p.configureDebugVisualizer(p.COV_ENABLE_SEGMENTATION_MARK_PREVIEW, 0, physicsClientId=cid)
+                #p.configureDebugVisualizer(p.COV_ENABLE_DEPTH_BUFFER_PREVIEW, 0, physicsClientId=cid)
+                #p.configureDebugVisualizer(p.COV_ENABLE_RGB_BUFFER_PREVIEW, 0, physicsClientId=cid)
+                
                 egl = pkgutil.get_loader("eglRenderer")
                 log.info("Loading EGL plugin (may segfault on misconfigured systems)...")
                 if egl:
@@ -127,8 +158,9 @@ class PlayTableSimEnv(gym.Env):
                     log.error("\nPlugin Failed to load!\n")
                     sys.exit()
                 # set environment variable for tacto renderer
-                os.environ["PYOPENGL_PLATFORM"] = "egl"
                 log.info("Successfully loaded egl plugin")
+
+                
             else:
                 self.p = bc.BulletClient(connection_mode=p.DIRECT)
                 cid = self.p._client
@@ -152,7 +184,7 @@ class PlayTableSimEnv(gym.Env):
 
         self.robot.load()
         self.scene.load()
-
+  
     def close(self):
         if self.ownsPhysicsClient:
             print("disconnecting id %d from server" % self.cid)
@@ -168,13 +200,15 @@ class PlayTableSimEnv(gym.Env):
     def render(self, mode="human"):
         """render is gym compatibility function"""
         rgb_obs, depth_obs = self.get_camera_obs()
+        print(f"RGB: {rgb_obs}")
+
         if mode == "human":
             if "rgb_static" in rgb_obs:
                 img = rgb_obs["rgb_static"][:, :, ::-1]
-                cv2.imshow("simulation cam", cv2.resize(img, (500, 500)))
+                cv2.imwrite("simulation_cam.png", cv2.resize(img, (500, 500)))
             if "rgb_gripper" in rgb_obs:
                 img2 = rgb_obs["rgb_gripper"][:, :, ::-1]
-                cv2.imshow("gripper cam", cv2.resize(img2, (500, 500)))
+                cv2.imwrite("gripper_cam.png", cv2.resize(img2, (500, 500)))
             cv2.waitKey(1)
         elif mode == "rgb_array":
             assert "rgb_static" in rgb_obs, "Environment does not have static camera"
@@ -298,7 +332,8 @@ def get_env(task_name, obs_space=None, show_gui=True):
         for k in exclude_keys:
             del render_conf["cameras"][k]
 
-
+    if not hydra.core.global_hydra.GlobalHydra.instance().is_initialized():
+        hydra.initialize(".")
     env = hydra.utils.instantiate(render_conf["env"], show_gui=show_gui, use_vr=False, use_scene_info=True)
     return env
 
@@ -312,7 +347,7 @@ def run_env(show_gui=True):
 
     while True:
         env.step(np.array((0.0, 0, 0, 0, 0, 0, 1)))
-        env.render()
+        #env.render()
         time.sleep(0.01)
 
 
@@ -325,5 +360,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    run_env(show_gui=False)
-
+    #run_env(show_gui=False)
+    logging.basicConfig(level=logging.INFO) 
+    env = get_env("task_D_D", show_gui=False)
+    info = env.reset()
+    
+    env.render()
+    time.sleep(10)
+    #env.step(np.array((0.0, 0, 0, 0, 0, 0, 1)))
+    

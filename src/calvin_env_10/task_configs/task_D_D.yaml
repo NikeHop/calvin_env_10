@@ -29,16 +29,6 @@ cameras:
     farval: 2
     width: 84
     height: 84
-  tactile:
-    _target_: calvin_env_10.camera.tactile_sensor.TactileSensor
-    name: tactile
-    width: 120
-    height: 160
-    digit_link_ids:
-    - 10
-    - 12
-    visualize_gui: false
-    config_path: conf/digit_sensor/config_digit.yml
 vr_input:
   vr_controller:
     POSITION: 1
@@ -75,7 +65,7 @@ env:
   robot_cfg: ${robot}
   scene_cfg: ${scene}
   use_scene_info: false
-  use_egl: false
+  use_egl: True
   control_freq: 30
 scene:
   _target_: calvin_env_10.scene.play_table_scene.PlayTableScene
