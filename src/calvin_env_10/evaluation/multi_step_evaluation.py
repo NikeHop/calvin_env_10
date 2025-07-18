@@ -5,8 +5,8 @@ import time
 from tqdm import tqdm
 import numpy as np
 
-from sequences import get_sequences
-from utils import get_log_dir, count_success, get_env_state_for_initial_condition
+from calvin_env_10.evaluation.sequences import get_sequences
+from calvin_env_10.evaluation.utils import get_log_dir, count_success, get_env_state_for_initial_condition
 from calvin_env_10.envs.play_table_env import get_env
 
 import cv2
