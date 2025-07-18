@@ -7,7 +7,7 @@ import logging
 import multiprocessing
 from operator import add
 
-from utils import temp_seed
+from calvin_env_10.evaluation.utils import temp_seed
 import numpy as np
 
 logger = logging.getLogger(__name__)
