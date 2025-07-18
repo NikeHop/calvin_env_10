@@ -17,7 +17,7 @@ EP_LEN = 360
 NUM_SEQUENCES = 1000
 BASE_DIR = Path(__file__).parent.parent
 
-def evaluate_policy(model, env, step_size=16, eval_log_dir=None):
+def evaluate_policy(model, env, step_size=16, n_videos=10, eval_log_dir=None):
     """
     Run this function to evaluate a model on the CALVIN challenge.
 
@@ -49,7 +49,9 @@ def evaluate_policy(model, env, step_size=16, eval_log_dir=None):
     for i, (initial_state, eval_sequence) in enumerate(eval_sequences):
         result, output = evaluate_sequence(env, model, step_size, task_oracle, initial_state, eval_sequence, val_annotations)
         results.append(result)
-        create_trajectory(output[0], output[1], f"{eval_log_dir}/trajectory_{i}.mp4")
+        if i < n_videos:
+            create_trajectory(output[0], output[1], f"{eval_log_dir}/trajectory_{i}.mp4")
+            
         eval_sequences.set_description(
             " ".join([f"{i + 1}/5 : {v * 100:.1f}% |" for i, v in enumerate(count_success(results))]) + "|"
         )
@@ -187,4 +189,4 @@ if __name__ == "__main__":
     step_size = 16
     policy = TestPolicy(step_size)
 
-    evaluate_policy(policy,env,step_size,eval_log_dir="eval_log")
+    evaluate_policy(policy,env,step_size,n_videos=10,eval_log_dir="eval_log")
