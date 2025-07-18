@@ -12,12 +12,13 @@ from calvin_env_10.envs.play_table_env import get_env
 import cv2
 import os
 from pathlib import Path
+import wandb 
 
 EP_LEN = 360
 NUM_SEQUENCES = 1000
 BASE_DIR = Path(__file__).parent.parent
 
-def evaluate_policy(model, env, step_size=16, n_videos=10, eval_log_dir=None):
+def evaluate_policy(model, env, step_size=16, n_videos=10, eval_log_dir=None, wandb_log=False):
     """
     Run this function to evaluate a model on the CALVIN challenge.
 
@@ -32,6 +33,8 @@ def evaluate_policy(model, env, step_size=16, n_videos=10, eval_log_dir=None):
     Returns:
         Dictionary with results
     """
+    if wandb_log:
+        wandb.init(project="calvin_env_10", name="multi_step_evaluation")
 
     task_cfg = OmegaConf.load(os.path.join(BASE_DIR, "conf/tasks/new_playtable_tasks.yaml"))
     task_oracle = hydra.utils.instantiate(task_cfg)
@@ -51,10 +54,14 @@ def evaluate_policy(model, env, step_size=16, n_videos=10, eval_log_dir=None):
         results.append(result)
         if i < n_videos:
             create_trajectory(output[0], output[1], f"{eval_log_dir}/trajectory_{i}.mp4")
-            
+
         eval_sequences.set_description(
             " ".join([f"{i + 1}/5 : {v * 100:.1f}% |" for i, v in enumerate(count_success(results))]) + "|"
         )
+
+        if wandb_log:
+            for i, v in enumerate(count_success(results)):
+                wandb.log({f"success_rate_{i}": v})
 
 
     return results
@@ -189,4 +196,4 @@ if __name__ == "__main__":
     step_size = 16
     policy = TestPolicy(step_size)
 
-    evaluate_policy(policy,env,step_size,n_videos=10,eval_log_dir="eval_log")
+    evaluate_policy(policy,env,step_size,n_videos=10,eval_log_dir="eval_log", wandb_log=True)
