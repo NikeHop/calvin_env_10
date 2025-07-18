@@ -65,7 +65,7 @@ class PlayTableSimEnv(gym.Env):
         self.use_egl = use_egl
         self.control_freq = control_freq
         self.action_repeat = int(bullet_time_step // control_freq)
-        print(cameras)
+        
         render_width = max([cameras[cam].width for cam in cameras]) if cameras else None
         render_height = max([cameras[cam].height for cam in cameras]) if cameras else None
         self.initialize_bullet(bullet_time_step, render_width, render_height)
@@ -95,9 +95,6 @@ class PlayTableSimEnv(gym.Env):
         Image.fromarray(img[:, :, :3].astype(np.uint8)).save("render.png")
         """
         # init cameras after scene is loaded to have robot id available
-        print(cameras)
-        print(self.robot)
-        print(self.scene)
 
         self.cameras = [
             hydra.utils.instantiate(
@@ -200,7 +197,7 @@ class PlayTableSimEnv(gym.Env):
     def render(self, mode="human"):
         """render is gym compatibility function"""
         rgb_obs, depth_obs = self.get_camera_obs()
-        print(f"RGB: {rgb_obs}")
+ 
 
         if mode == "human":
             if "rgb_static" in rgb_obs:

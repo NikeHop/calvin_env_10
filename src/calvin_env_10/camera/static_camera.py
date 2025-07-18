@@ -61,8 +61,8 @@ class StaticCamera(Camera):
         return look_from, look_at
 
     def render(self):
-        print(f"Static Camera: {self.viewMatrix}")
-        print(f"Static Camera: {self.projectionMatrix}")
+        
+        
         image = p.getCameraImage(
             width=self.width,
             height=self.height,
