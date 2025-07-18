@@ -15,7 +15,7 @@ from pathlib import Path
 
 EP_LEN = 360
 NUM_SEQUENCES = 1000
-
+BASE_DIR = Path(__file__).parent.parent
 
 def evaluate_policy(model, env, step_size=16, eval_log_dir=None):
     """
@@ -33,9 +33,9 @@ def evaluate_policy(model, env, step_size=16, eval_log_dir=None):
         Dictionary with results
     """
 
-    task_cfg = OmegaConf.load("../conf/tasks/new_playtable_tasks.yaml")
+    task_cfg = OmegaConf.load(os.path.join(BASE_DIR, "conf/tasks/new_playtable_tasks.yaml"))
     task_oracle = hydra.utils.instantiate(task_cfg)
-    val_annotations = OmegaConf.load("../conf/annotations/new_playtable_validation.yaml")
+    val_annotations = OmegaConf.load(os.path.join(BASE_DIR, "conf/annotations/new_playtable_validation.yaml"))
 
     eval_log_dir = get_log_dir(eval_log_dir)
 
