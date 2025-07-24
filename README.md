@@ -12,7 +12,9 @@ Some of the changes:
 Install the environment as a dependency via uv or pip.
 
 ```sh
+uv venv --python=3.10
 uv pip install git+https://github.com/NikeHop/calvin_env_10.git
+source .venv/bin/activate
 ```
 
 Create an instance of the environment 
@@ -25,15 +27,30 @@ task = "task_D" # available tasks: task_A, task_B, task_C
 env = get_env(task,show_gui=False)
 
 info = env.reset()
-
-
 ```
 
-Run multistep evaluation by wrapping your policy.
+Run multistep evaluation by wrapping your policy to .
 
 ```python
+import numpy as np 
 
- 
+from calvin_env_10.envs.play_table_env import get_env
+from calvin_env_10.evaluation.multi_step_evaluation import evaluate_policy
+
+class PolicyWrapper():
+
+  def __init__(self,policy):
+    self.policy = policy 
+  
+  def step(self,obs: dict[str, Any], lang_annotation: str)->Union[np.ndarray, tuple[np.ndarray,np.ndarray,np.ndarray]]
+    pass 
+
+
+# Create environment 
+
+# Perform Multistep Policy Evaluation 
+
+
 ```
 
 
