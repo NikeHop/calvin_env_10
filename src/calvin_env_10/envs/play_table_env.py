@@ -84,38 +84,16 @@ class PlayTableSimEnv(gym.Env):
         # Load Env
         self.load()
 
-        """
-        for _ in range(100):
-            self.p.stepSimulation()
 
-        view = self.p.computeViewMatrixFromYawPitchRoll([0, 0, 0], 1.5, 30, -30, 0, 2)
-        proj = self.p.computeProjectionMatrixFOV(60, 1.0, 0.1, 100.0)
-
-        print(view)
-        print(proj)
-        w, h, rgba, _, _ = p.getCameraImage(640, 480, view, proj,physicsClientId=self.cid, renderer=p.ER_BULLET_HARDWARE_OPENGL)
-        img = np.reshape(rgba, (h, w, 4))
-        Image.fromarray(img[:, :, :3].astype(np.uint8)).save("render.png")
-        """
         # init cameras after scene is loaded to have robot id available
-
         self.cameras = [
             hydra.utils.instantiate(
                 cameras[name], cid=self.cid, robot_id=self.robot.robot_uid, objects=self.scene.get_objects()
             )
             for name in cameras 
         ]
-        self.debug_scene(self.p, self.cid)
         
-    def debug_scene(self, p, cid):
-        num = p.getNumBodies(physicsClientId=cid)
-        print(f"=== Scene has {num} bodies ===")
-        for i in range(num):
-            bid = p.getBodyUniqueId(i, physicsClientId=cid)
-            name = p.getBodyInfo(bid, physicsClientId=cid)[1].decode()
-            visuals = p.getVisualShapeData(bid, physicsClientId=cid)
-            print(f"- {name} (id={bid}): {len(visuals)} visual shapes")
-
+        
 
     def __del__(self):
         self.close()

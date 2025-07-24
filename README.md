@@ -107,8 +107,8 @@ class PolicyWrapper():
              where the number of actions is the same as the step size")
 
 class BoringPolicy():
-    
-    def __call__(self,obs:dict[str,Any],lang_annotation:str)->np.ndarray:
+
+    def __call__(self,obs:dict[str,Any],lang_annotation:str)->list[np.ndarray]:
         return [np.array([0,0,0,0,0,0,1],dtype=np.float32) for _ in range(16)]
     
     
@@ -120,9 +120,7 @@ class BoringPolicyWrapper(PolicyWrapper):
 
 
 task = "task_D"  # available tasks: task_A, task_B, task_C
-
 env = get_env(task, show_gui=False)
-
 policy = BoringPolicyWrapper(BoringPolicy())
 
 evaluate_policy(
@@ -153,3 +151,6 @@ If you use this environment in your research, please cite the original CALVIN pa
 }
 ```
 
+## Acknowledgements 
+
+The code is adapted from the repo [calvin_env](https://github.com/mees/calvin_env) published under the MIT license.

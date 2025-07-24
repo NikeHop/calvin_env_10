@@ -80,7 +80,6 @@ def create_trajectory(trajectories, tasks, video_path):
     
     # Get video dimensions from first image
     first_img = trajectories[0][0] if trajectories[0] else None
-    print(first_img.shape)
     height, width = first_img.shape[:2]
     
     # Create video writer with dimensions that include the white text area
@@ -90,7 +89,6 @@ def create_trajectory(trajectories, tasks, video_path):
     
     try:
         for task_idx, (task_trajectory, task_description) in enumerate(zip(trajectories, tasks)):
-            print(f"Processing task {task_idx + 1}/{len(tasks)}: {task_description}")
             
             # Add task description text for all frames of each task
             for frame_idx, frame in enumerate(task_trajectory):
@@ -133,7 +131,6 @@ def evaluate_sequence(env, model, step_size, task_checker, initial_state, eval_s
     """
     Evaluates a sequence of language instructions.
     """
-    print(initial_state)
     robot_obs, scene_obs = get_env_state_for_initial_condition(initial_state)
     env.reset(robot_obs=robot_obs, scene_obs=scene_obs)
 
