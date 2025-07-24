@@ -12,7 +12,7 @@ Some of the changes:
 Install the environment as a dependency via uv or pip.
 
 ```sh
-uv pip install https://github.com/NikeHop/calvin_env_10.git
+uv pip install git+https://github.com/NikeHop/calvin_env_10.git
 ```
 
 Create an instance of the environment 
