@@ -26,31 +26,109 @@ task = "task_D" # available tasks: task_A, task_B, task_C
 
 env = get_env(task,show_gui=False)
 
-info = env.reset()
+start_obs = env.reset()
+
+print(start_obs)
+
+done = False
+while not done:
+
+  # Relative actions
+  action = np.array([0,0,0,0,0,0,1], dtype=np.float32)
+  
+  # Absolute actions
+  #action = (
+  #      np.array([0, 0, 0], dtype=np.float32),
+  #      np.array([0, 0, 0], dtype=np.float32),
+  #      np.array([1], dtype=np.float32),
+  #  )
+    
+  
+  obs, reward, done, info = env.step(action)
+
+  print(obs)
+  print(reward)
+  print(done)
+  print(info)
+
+  print("--------------------------------")
+  break
+
 ```
 
-Run multistep evaluation by wrapping your policy to .
+Structure of the observations:
+```sh
+{
+"rgb_obs": {"rgb_static":np.array,"rgb_gripper":np.array}
+"depth_obs": {"depth_static":np.array,"depth_gripper":np.array}
+"scene_obs": np.array
+"robot_obs": np.array
+}
+```
+
+
+Run multistep evaluation by wrapping your policy:
 
 ```python
-import numpy as np 
+from typing import Any, Union, NewType
+
+
+import numpy as np
 
 from calvin_env_10.envs.play_table_env import get_env
 from calvin_env_10.evaluation.multi_step_evaluation import evaluate_policy
 
+# Type definitions
+RelAction = NewType("RelAction", np.ndarray)
+AbsAction = NewType("AbsAction", tuple[np.ndarray,np.ndarray,np.ndarray])
+
+
 class PolicyWrapper():
 
-  def __init__(self,policy):
-    self.policy = policy 
-  
-  def step(self,obs: dict[str, Any], lang_annotation: str)->Union[np.ndarray, tuple[np.ndarray,np.ndarray,np.ndarray]]
-    pass 
+    def __init__(self, policy):
+        self.policy = policy
+
+    def step(
+        self, obs: dict[str, Any], lang_annotation: str
+    ) -> list[Union[RelAction, AbsAction]]:
+        actions = self.policy(obs, lang_annotation)
+        actions = self.transform(actions)
+        return actions
+    
+    def reset(self)->None:
+        pass
+    
+    def transform(self,actions:Any)->list[Union[RelAction, AbsAction]]:
+        raise NotImplementedError("Transform your policy output into a list of actions, \
+             where the number of actions is the same as the step size")
+
+class BoringPolicy():
+    
+    def __call__(self,obs:dict[str,Any],lang_annotation:str)->np.ndarray:
+        return [np.array([0,0,0,0,0,0,1],dtype=np.float32) for _ in range(16)]
+    
+    
+
+class BoringPolicyWrapper(PolicyWrapper):
+    
+    def transform(self,actions:Any)->list[np.ndarray]:
+        return actions
 
 
-# Create environment 
+task = "task_D"  # available tasks: task_A, task_B, task_C
 
-# Perform Multistep Policy Evaluation 
+env = get_env(task, show_gui=False)
 
+policy = BoringPolicyWrapper(BoringPolicy())
 
+evaluate_policy(
+    policy,
+    env,
+    step_size=16, # To allow for action chunking
+    n_videos=10, # Records the trajectory for the first n sequences
+    eval_log_dir="./videos", # Directory to save the videos
+    wandb_log=True, # Will log the performance to the calvin_env_10 project 
+)
 ```
 
 
