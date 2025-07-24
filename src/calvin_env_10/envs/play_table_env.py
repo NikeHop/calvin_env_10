@@ -29,7 +29,10 @@ from calvin_env_10.utils.utils import FpsController
 
 BASE_DIR = Path(__file__).parent.parent
 TASK2CONFIG = {
-    "task_D_D": os.path.join(BASE_DIR, "task_configs/task_D_D.yaml"),
+    "task_D": os.path.join(BASE_DIR, "task_configs/task_D.yaml"),
+    "task_C": os.path.join(BASE_DIR, "task_configs/task_C.yaml"),
+    "task_B": os.path.join(BASE_DIR, "task_configs/task_B.yaml"),
+    "task_A": os.path.join(BASE_DIR, "task_configs/task_A.yaml"),
 }
 
 # A logger for this file
@@ -348,21 +351,4 @@ def run_env(show_gui=True):
         time.sleep(0.01)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run CALVIN environment")
-    parser.add_argument(
-        "--config", type=str, help="Path to the env config.yaml"
-    )
-    parser.add_argument("--show_gui", action="store_true", default=False)
 
-    args = parser.parse_args()
-
-    #run_env(show_gui=False)
-    logging.basicConfig(level=logging.INFO) 
-    env = get_env("task_D_D", show_gui=False)
-    info = env.reset()
-    
-    env.render()
-    time.sleep(10)
-    #env.step(np.array((0.0, 0, 0, 0, 0, 0, 1)))
-    

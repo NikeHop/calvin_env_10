@@ -12,6 +12,7 @@ src/calvin_env_10/camera/static_camera.py
 src/calvin_env_10/camera/tactile_sensor.py
 src/calvin_env_10/conf/config_data_collection.yaml
 src/calvin_env_10/conf/config_rendering.yaml
+src/calvin_env_10/conf/annotations/new_playtable_validation.yaml
 src/calvin_env_10/conf/cameras/no_cameras.yaml
 src/calvin_env_10/conf/cameras/static_and_gripper.yaml
 src/calvin_env_10/conf/cameras/static_and_tactile.yaml
@@ -243,6 +244,10 @@ src/calvin_env_10/data/plane/plane.mtl
 src/calvin_env_10/data/plane/plane.obj
 src/calvin_env_10/data/plane/plane.urdf
 src/calvin_env_10/envs/play_table_env.py
+src/calvin_env_10/envs/tasks.py
+src/calvin_env_10/evaluation/multi_step_evaluation.py
+src/calvin_env_10/evaluation/sequences.py
+src/calvin_env_10/evaluation/utils.py
 src/calvin_env_10/robot/mixed_ik.py
 src/calvin_env_10/robot/robot.py
 src/calvin_env_10/scene/play_table_scene.py
@@ -253,6 +258,7 @@ src/calvin_env_10/scene/objects/fixed_object.py
 src/calvin_env_10/scene/objects/light.py
 src/calvin_env_10/scene/objects/movable_object.py
 src/calvin_env_10/scene/objects/switch.py
+src/calvin_env_10/task_configs/task_C_C.yaml
 src/calvin_env_10/task_configs/task_D_D.yaml
 src/calvin_env_10/utils/utils.py
 tests/test_environment.py
