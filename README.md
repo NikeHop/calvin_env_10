@@ -13,12 +13,12 @@ Some of the changes:
 
 ## Usage 
 
-Install the environment as a dependency via uv or pip.
+Install the environment as a dependency via uv or pip. For example using uv:
 
 ```sh
 uv venv --python=3.10
-uv pip install git+https://github.com/NikeHop/calvin_env_10.git
 source .venv/bin/activate
+uv pip install git+https://github.com/NikeHop/calvin_env_10.git
 ```
 
 Create an instance of the environment 
@@ -114,7 +114,7 @@ class BoringPolicy():
     
 
 class BoringPolicyWrapper(PolicyWrapper):
-    
+
     def transform(self,actions:Any)->list[np.ndarray]:
         return actions
 
