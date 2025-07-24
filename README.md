@@ -1,6 +1,8 @@
 # CALVIN Environment (Python 3.10)
 
-![ExampleTrajectory](./assets/trajectory_3.gif)
+<p align=center>
+<img src="./assets/trajectory_3.gif" alt="Demo" width="250"/>
+</p>
 
 The CALVIN environment with updated dependencies. For the original environment + dataset see [here](https://github.com/mees/calvin)
 
