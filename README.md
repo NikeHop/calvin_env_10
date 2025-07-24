@@ -11,6 +11,10 @@ Some of the changes:
 * Updated the dependencies of [urdfpy](https://github.com/NikeHop/urdfpy.git).
 * Simplified instantiation of the environment and multistep evaluation.
 
+## Prerequisites 
+
+Python 3.10 
+
 ## Usage 
 
 Install the environment as a dependency via uv or pip. For example using uv:
@@ -24,6 +28,8 @@ uv pip install git+https://github.com/NikeHop/calvin_env_10.git
 Create an instance of the environment 
 
 ```python
+import numpy as np 
+
 from calvin_env_10.envs.play_table_env import get_env 
 
 task = "task_D" # available tasks: task_A, task_B, task_C
