@@ -1,5 +1,7 @@
 # CALVIN Environment (Python 3.10)
 
+![ExampleTrajectory](./assets/trajectory_3.gif)
+
 The CALVIN environment with updated dependencies. For the original environment + dataset see [here](https://github.com/mees/calvin)
 
 Some of the changes: 
@@ -89,7 +91,7 @@ class PolicyWrapper():
         self.policy = policy
 
     def step(
-        self, obs: dict[str, Any], lang_annotation: str
+        self, obs: dict[str, np.ndarray], lang_annotation: str
     ) -> list[Union[RelAction, AbsAction]]:
         actions = self.policy(obs, lang_annotation)
         actions = self.transform(actions)
